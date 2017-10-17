@@ -35,10 +35,30 @@ RUN cd /opt/ &&\
 
 
 ######################################################
+# install proxychains-ng
+######################################################
+RUN cd /tmp && git clone https://github.com/rofl0r/proxychains-ng.git && cd proxychains-ng &&\
+    ./configure --prefix=/usr --sysconfdir=/etc && \
+    make && make install && make install-config && \
+    sed -i "s/^socks4/#&/" /etc/proxychains.conf && \
+    rm -rf /tmp/proxychains-ng
+
+
+# PROXY_PROTOCOL could be socks5 or http
+ENV PROXY_PROTOCOL=""
+ENV PROXY_SERVER=""
+ENV PROXY_PORT=""
+
+######################################################
 ADD entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
 RUN useradd hubot -m
+ENV PROXY_CONFIG="/home/hubot/proxychains.conf"
+RUN mv /etc/proxychains.conf /home/hubot/ &&\
+ ln -s $PROXY_CONFIG /etc/proxychains.conf &&\
+ chown hubot:hubot $PROXY_CONFIG
+
 USER hubot
 WORKDIR /home/hubot
 
@@ -75,3 +95,4 @@ ENV EXTERNAL_SCRIPTS "hubot-help,hubot-hyper-devops"
 CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \
 	npm install $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") && \
 	bin/hubot -n $HUBOT_NAME --adapter slack
+

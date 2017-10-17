@@ -1,17 +1,13 @@
 #!/bin/bash
 
-if [ "${HYPER_ACCESS_KEY}" == "" -o "${HYPER_SECRET_KEY}" == "" ];then
-  echo "Please set HYPER_ACCESS_KEY and HYPER_SECRET_KEY"
-  exit 1
-fi
+if [ "${HYPER_ACCESS_KEY}" != "" -a "${HYPER_SECRET_KEY}" != "" ];then
+    REGION=${REGION:-us-west-1}
+    API_ROUTER=${API_ROUTER:-tcp://us-west-1.hyper.sh:443}
 
-REGION=${REGION:-us-west-1}
-API_ROUTER=${API_ROUTER:-tcp://us-west-1.hyper.sh:443}
-
-#ensure config for hyper cli
-HYPER_CONFIG=~/.hyper
-mkdir -p ${HYPER_CONFIG}
-cat > ${HYPER_CONFIG}/config.json <<EOF
+    #ensure config for hyper cli
+    HYPER_CONFIG=~/.hyper
+    mkdir -p ${HYPER_CONFIG}
+    cat > ${HYPER_CONFIG}/config.json <<EOF
 {
     "clouds": {
         "${API_ROUTER}": {
@@ -27,5 +23,10 @@ cat > ${HYPER_CONFIG}/config.json <<EOF
     }
 }
 EOF
+fi
+
+if [ "PROXY_SERVER" != "" ];then
+    echo "${PROXY_PROTOCOL:-http} 	${PROXY_SERVER} ${PROXY_PORT:-1080}" >> ${PROXY_CONFIG}
+fi
 
 exec "$@"
