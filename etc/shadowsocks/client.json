@@ -1,0 +1,9 @@
+{
+  "server": "{SS_SERVER}",
+  "server_port": {SSPORT},
+  "password": "{SS_PASSWORD}",
+  "method": "{SS_METHOD}",
+  "local_address": "0.0.0.0",
+  "local_port": 1080,
+  "timeout": 600
+}
