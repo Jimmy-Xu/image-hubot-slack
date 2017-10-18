@@ -1,0 +1,12 @@
+# Defaults for sslocal initscript
+# sourced by /etc/init.d/sslocal
+# installed at /etc/default/sslocal by the maintainer scripts
+
+USERID="nobody"
+
+#
+# This is a POSIX shell fragment
+#
+
+# Additional options that are passed to the Daemon.
+DAEMON_OPTS="-c /etc/shadowsocks/client.json"
