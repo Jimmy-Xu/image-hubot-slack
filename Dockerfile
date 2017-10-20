@@ -96,6 +96,9 @@ ENV HUBOT_GMAIL_CHECK_INTERVAL=""
 ENV HUBOT_IMAP_PROXY_SERVER=""
 ENV HUBOT_IMAP_PROXY_PORT="${HUBOT_IMAP_PROXY_PORT:-5993}"
 
+## hubot-slack-growl
+ENV HUBOT_SLACK_MYNAME=""
+ENV HUBOT_SLACK_KEYWORDS=""
 
 ######################################################
 # ENV for proxy
@@ -148,9 +151,9 @@ RUN yo hubot --owner="${HUBOT_OWNER}" --name="${HUBOT_NAME}" --description="${HU
 		sed -i /redis-brain/d ./external-scripts.json &&\
 		npm install hubot-scripts hubot-script-shellcmd &&\
 		cp -R ./node_modules/hubot-script-shellcmd/bash . &&\
-		npm install hubot-slack hubot-help hubot-hyper-devops --save
+		npm install hubot-slack hubot-help hubot-hyper-devops hubot-gmail-growl hubot-slack-growl --save
 
-ENV EXTERNAL_SCRIPTS "hubot-help,hubot-hyper-devops,hubot-gmail-growl"
+ENV EXTERNAL_SCRIPTS "hubot-help,hubot-hyper-devops,hubot-gmail-growl,hubot-slack-growl"
 CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \
 	npm install $(node -e "console.log('$EXTERNAL_SCRIPTS'.split(',').join(' '))") && \
 	bin/hubot -n $HUBOT_NAME --adapter slack

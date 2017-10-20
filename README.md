@@ -1,7 +1,7 @@
 Dockefile of hyperhq/hyper-devops
 ==============================================
 
-run hubot in container. 
+run hubot in container.
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -15,19 +15,17 @@ run hubot in container.
 	- [Gmail Basic Auth](#gmail-basic-auth)
 	- [Install Growl](#install-growl)
 - [Usage](#usage)
-	- [Test gmail](#test-gmail)
+	- [Use hyper-gmail-growl](#use-hyper-gmail-growl)
 		- [without proxy](#without-proxy)
 		- [use external http proxy](#use-external-http-proxy)
 		- [use external socks5 proxy](#use-external-socks5-proxy)
 		- [use external shadowsocks server](#use-external-shadowsocks-server)
-	- [Test slack and hypercli](#test-slack-and-hypercli)
+	- [Use hubot-hyper-devops](#use-hubot-hyper-devops)
 		- [run with docker](#run-with-docker)
 		- [run with hyper](#run-with-hyper)
-		- [slack with gntp-send](#slack-with-gntp-send)
-- [for send notification via gntp-send(growl client)](#for-send-notification-via-gntp-sendgrowl-client)
-- [run the following commands in docker container](#run-the-following-commands-in-docker-container)
+		- [send message in slack](#send-message-in-slack)
+	- [Run hubot-slack-growl](#run-hubot-slack-growl)
 - [invite hubot in slack channel](#invite-hubot-in-slack-channel)
-- [send message in slack](#send-message-in-slack)
 
 <!-- /TOC -->
 
@@ -115,7 +113,7 @@ for basic auth, go to https://myaccount.google.com/security?pli=1#connectedapps,
 
 # Usage
 
-## Test gmail
+## Use hyper-gmail-growl
 
 Solution diagram  
 ![](doc/solution.png)
@@ -127,14 +125,14 @@ Notification history
 ![](doc/growl-for-windows.png)
 
 
-```
+```bash
 //env for gmail
 export HUBOT_GMAIL_USERNAME="jimmy@hyper.sh"
 export HUBOT_GMAIL_PASSWORD="xxxxxx"
 export HUBOT_GMAIL_LABEL="To Me"
 export HUBOT_GMAIL_CHECK_INTERVAL="5"
 
-//for send notification via gntp-send(growl client)
+//for send notification via gntp-send[growl client]
 export HUBOT_GNTP_SERVER="192.168.1.23"
 export HUBOT_GNTP_PASSWORD="xxxxxx"
 ```
@@ -143,32 +141,32 @@ export HUBOT_GNTP_PASSWORD="xxxxxx"
 
 > gmail was blocked without proxy
 
-```
-$ docker run -it --rm \
-  -e HUBOT_NAME="hubot" \
-  -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
-  -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
-  -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
-  -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
-  hyperhq/hyper-devops bash
+```bash
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
+    -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
+    -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    hyperhq/hyper-devops bash
 ```
 
 ### use external http proxy
 
-```
+```bash
 //imap proxy via http
 export HTTP_PROXY_IP=192.168.1.137
 export HTTP_PROXY_PORT=8118
 
 //specify USE_EXT_HTTP_PROXY
-$ docker run -it --rm \
-  -e HUBOT_NAME="hubot" \
-  -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
-  -e USE_EXT_HTTP_PROXY=1 -e HTTP_PROXY_IP=$HTTP_PROXY_IP -e HTTP_PROXY_PORT=$HTTP_PROXY_PORT \
-  -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
-  -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
-  -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
-  hyperhq/hyper-devops bash
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
+    -e USE_EXT_HTTP_PROXY=1 -e HTTP_PROXY_IP=$HTTP_PROXY_IP -e HTTP_PROXY_PORT=$HTTP_PROXY_PORT \
+    -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
+    -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    hyperhq/hyper-devops bash
 
 //run the following commands in docker container
 ./start.sh init
@@ -184,24 +182,23 @@ Started the GMail fetch
 [Thu Oct 19 2017 13:33:00 GMT+0000 (UTC)] INFO Check it!
 [Thu Oct 19 2017 13:33:01 GMT+0000 (UTC)] INFO Max UID: 17276
 ...
-
 ```
 
 ### use external socks5 proxy
 
-```
+```bash
 export SOCKS5_PROXY_IP=192.168.1.137
 export SOCKS5_PROXY_PORT=1080
 
 //specify USE_EXT_SSLOCAL
-$ docker run -it --rm \
-  -e HUBOT_NAME="hubot" \
-  -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
-  -e USE_EXT_SSLOCAL=1 -e SOCKS5_PROXY_IP=$SOCKS5_PROXY_IP -e SOCKS5_PROXY_PORT=$SOCKS5_PROXY_PORT \
-  -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
-  -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
-  -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
-  hyperhq/hyper-devops bash
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
+    -e USE_EXT_SSLOCAL=1 -e SOCKS5_PROXY_IP=$SOCKS5_PROXY_IP -e SOCKS5_PROXY_PORT=$SOCKS5_PROXY_PORT \
+    -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
+    -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    hyperhq/hyper-devops bash
 
 //run the following commands in docker container
 ./start.sh init
@@ -210,21 +207,21 @@ $ docker run -it --rm \
 
 ### use external shadowsocks server
 
-```
+```bash
 export SS_SERVER=x.x.x.x
 export SS_PORT=20171
 export SS_PASSWORD=xxxxxx
 export SS_METHOD=aes-256-cfb
 
 //specify USE_EXT_SSSERVER
-$ docker run -it --rm \
-  -e HUBOT_NAME="hubot" \
-  -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
-  -e USE_EXT_SSSERVER=1 -e SS_SERVER=$SS_SERVER -e SS_PORT=$SS_PORT -e SS_PASSWORD=$SS_PASSWORD \
-  -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
-  -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
-  -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
-  hyperhq/hyper-devops bash
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-gmail-growl" \
+    -e USE_EXT_SSSERVER=1 -e SS_SERVER=$SS_SERVER -e SS_PORT=$SS_PORT -e SS_PASSWORD=$SS_PASSWORD \
+    -e HUBOT_GMAIL_USERNAME=$HUBOT_GMAIL_USERNAME -e HUBOT_GMAIL_PASSWORD=$HUBOT_GMAIL_PASSWORD \
+    -e HUBOT_GMAIL_LABEL="$HUBOT_GMAIL_LABEL" -e HUBOT_GMAIL_CHECK_INTERVAL=$HUBOT_GMAIL_CHECK_INTERVAL \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    hyperhq/hyper-devops bash
 
 //run the following commands in docker container
 ./start.sh init
@@ -232,29 +229,29 @@ $ docker run -it --rm \
 ```
 
 
-## Test slack and hypercli
+## Use hubot-hyper-devops
 
 ### run with docker
-```
+
+```bash
 export HUBOT_SLACK_TOKEN=xoxb-xxx-yyy
 export HYPER_ACCESS_KEY=xxxxx
 export HYPER_SECRET_KEY=xxxxxxxxxxx
 
 // start by manual
-$ docker run -it --rm \
--e HUBOT_NAME="hubot" \
--e HUBOT_OWNER="jimmy" \
--e EXTERNAL_SCRIPTS="hubot-help,hubot-hyper-devops" \
--e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
--e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY"   -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
--e http_proxy="$http_proxy" \
--e https_proxy="$https_proxy" \
-hyperhq/hyper-devops:latest /bin/bash
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e HUBOT_OWNER="jimmy" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-hyper-devops,hubot-script-shellcmd" \
+    -e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
+    -e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY"   -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
+    -e http_proxy="$http_proxy" \
+    -e https_proxy="$https_proxy" \
+    hyperhq/hyper-devops:latest /bin/bash
 
 //run the following commands in docker container
 ./start.sh init
 ./start.sh slack
-
 ```
 
 ### run with hyper
@@ -262,58 +259,20 @@ hyperhq/hyper-devops:latest /bin/bash
 - no fip required
 - no port required
 
-```
+```bash
 // start as daemon
-$ hyper run -d --name hubot-hyper-devops \
- -e HUBOT_NAME="hubot" \
- -e HUBOT_OWNER="jimmy" \
- -e EXTERNAL_SCRIPTS="hubot-help,hubot-hyper-devops" \
- -e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
- -e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY"   -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
- hyperhq/hyper-devops:latest
+hyper run -d --name hubot-hyper-devops \
+    -e HUBOT_NAME="hubot" \
+    -e HUBOT_OWNER="jimmy" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-hyper-devops,hubot-script-shellcmd" \
+    -e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
+    -e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY"   -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
+    hyperhq/hyper-devops:latest
 
-$ hyper update --protection=true hubot-hyper-devops
+hyper update --protection=true hubot-hyper-devops
 ```
 
-### slack with gntp-send
-
-Notify to growl when match slack message  
-![](doc/notification-slack.png)
-
-```
-export HUBOT_SLACK_TOKEN=xoxb-24xxxxxxx96-GMNpFxxxxxxxxxxxxx7Vf
-export HYPER_ACCESS_KEY=KXAO69KxxxxxxxxxxxxJR9W94
-export HYPER_SECRET_KEY=4yv3Rey1RdvsmxxxxxxwrAOLda7  
-
-#for send notification via gntp-send(growl client)
-export HUBOT_GNTP_SERVER="192.168.1.23"
-export HUBOT_GNTP_PASSWORD="xxxxxx"
-
-docker run -it --rm \
--e HUBOT_NAME="hubot" \
--e HUBOT_OWNER="jimmy" \
--e EXTERNAL_SCRIPTS="hubot-help,hubot-hyper-devops" \
--e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
--e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY" -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
--e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
--e http_proxy="$http_proxy" \
--e https_proxy="$https_proxy" \
-hyperhq/hyper-devops:latest /bin/bash
-
-#run the following commands in docker container
-./start.sh init
-./start.sh slack
-```
-
-# invite hubot in slack channel
-
-input message in slack channel(for example #devops-hubot):
-
-```
-/invite @hubot
-```
-
-# send message in slack
+### send message in slack
 
 ```
 Jimmy Xu [20:05]
@@ -350,3 +309,52 @@ hubotAPP [20:06]
 Hello..
 Sleepy World!
 ```
+
+
+## Run hubot-slack-growl
+
+Notify to growl when matched slack message  
+![](doc/notification-slack.png)
+
+> hubot **adapter** should be `slack`
+
+```bash
+export HUBOT_SLACK_TOKEN=xoxb-24xxxxxxx96-GMNpFxxxxxxxxxxxxx7Vf
+
+//for send notification via gntp-send[growl client]
+export HUBOT_SLACK_MYNAME=jimmy
+export HUBOT_SLACK_KEYWORDS="@jimmy,@channel,Jimmy Xu"
+export HUBOT_GNTP_SERVER="192.168.1.23"
+export HUBOT_GNTP_PASSWORD="xxxxxx"
+
+docker run -it --rm \
+    -e HUBOT_NAME="hubot" \
+    -e HUBOT_OWNER="jimmy" \
+    -e EXTERNAL_SCRIPTS="hubot-help,hubot-slack-growl" \
+    -e HUBOT_SLACK_TOKEN="$HUBOT_SLACK_TOKEN" \
+    -e HYPER_ACCESS_KEY="$HYPER_ACCESS_KEY" -e HYPER_SECRET_KEY="$HYPER_SECRET_KEY" \
+    -e HUBOT_SLACK_MYNAME=$HUBOT_SLACK_MYNAME -e HUBOT_SLACK_KEYWORDS="$HUBOT_SLACK_KEYWORDS" \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    -e http_proxy="$http_proxy" \
+    -e https_proxy="$https_proxy" \
+    hyperhq/hyper-devops:latest /bin/bash
+
+//run the following commands in docker container
+./start.sh init
+./start.sh slack
+```
+
+# invite hubot in slack channel
+
+input message in slack channel(for example #devops-hubot):
+
+```
+/invite @hubot
+```
+
+to view help, input : `@hubot help`
+
+
+also, you can send direct message to hubot  
+to view help in direct message, just input: `help`  
+![](doc/hubot-direct-message.png)
