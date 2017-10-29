@@ -318,6 +318,13 @@ Notify to growl when matched slack message
 
 > hubot **adapter** should be `slack`
 
+About SLACK TOKEN: [token type](https://api.slack.com/docs/token-types)
+
+- **xoxp-** user token
+  - recommend, it can be generated at https://api.slack.com/custom-integrations/legacy-tokens
+- **xoxb-** bot user token
+
+
 ```bash
 export HUBOT_SLACK_TOKEN=xoxb-24xxxxxxx96-GMNpFxxxxxxxxxxxxx7Vf
 
