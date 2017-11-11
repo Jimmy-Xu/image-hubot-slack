@@ -1,0 +1,62 @@
+# WX configuration
+#------------------------------------------------------------------------------------------
+# Config for request fields and WX mandatory fields (as below) in sending message out
+# - header
+#   + Cookie
+# - BaseRequest
+#   + Uin
+#   + Sid
+#   + Skey
+#   + DeviceID
+#------------------------------------------------------------------------------------------
+
+# Wx Urls #
+baseUrl: "https://wx.qq.com/cgi-bin/mmwebwx-bin" #wx/wx2
+baseUploadUrl: "https://file.wx.qq.com/cgi-bin/mmwebwx-bin" #file/file2
+getContactUrl: "/webwxgetcontact"
+batchGetContactUrl: "/webwxbatchgetcontact"
+sendMsgUrl: "/webwxsendmsg"
+getWebwxInit: "/webwxinit"
+getWebwxSync: "/webwxsync"
+getWebwxOplog: "/webwxoplog"
+syncCheck: "/synccheck"
+webWxUploadMedia: "/webwxuploadmedia"
+webwxsendmsgimg: "/webwxsendmsgimg"
+
+contentType: "application/json;charset=UTF-8"
+connection: "keep-alive"
+
+
+cookie: "{COOKIE}"
+Uin: "{UIN}"
+Sid: "{SID}"
+Skey: "{SKEY}"
+DeviceID: "{DEVICEID}"
+
+
+listenOnAllGroups: true
+listenGroupNameList: [""]
+
+# Media
+imageDir: ""
+imageDirForReply: ""
+sendImageGroupNameList: [""]
+
+# input maintainer name
+# Hubot will notify maintainer if encounter issues
+maintainerName: "Jimmy Xu"
+
+foreverDaemon: true
+
+# WxHubot Configurations
+# unit:
+  # s = seconds
+  # m = milliseconds
+  # u = microseconds
+  # n = nanoseconds
+webWxSyncInterval: "2s"
+syncCheckInterval: "30s"
+reportHealthInterval: "21600s"
+
+logToFile: false
+wxLogPath: "./wxhubot.log"

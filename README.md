@@ -25,7 +25,8 @@ run hubot in container.
 		- [run with hyper](#run-with-hyper)
 		- [send message in slack](#send-message-in-slack)
 	- [Run hubot-slack-growl](#run-hubot-slack-growl)
-- [invite hubot in slack channel](#invite-hubot-in-slack-channel)
+		- [invite hubot in slack channel](#invite-hubot-in-slack-channel)
+	- [Run hubot-another-weixin](#run-hubot-another-weixin)
 
 <!-- /TOC -->
 
@@ -51,15 +52,13 @@ run hubot in container.
 
 ## env
 
-- slack
+- hubot-slack-growl
   - HUBOT_SLACK_TOKEN
-- hyper cli
-  - HYPER_ACCESS_KEY
-  - HYPER_SECRET_KEY
-- gntp-send
+  - HUBOT_SLACK_MYNAME
+  - HUBOT_SLACK_KEYWORDS
   - GNTP_SERVER
   - GNTP_PASSWORD
-- gmail-growl
+- hubot-gmail-growl
   - HUBOT_GMAIL_USERNAME
   - HUBOT_GMAIL_PASSWORD
   - HUBOT_GMAIL_LABEL
@@ -68,18 +67,25 @@ run hubot in container.
   - HUBOT_GNTP_PASSWORD
   - HUBOT_IMAP_PROXY_SERVER
   - HUBOT_IMAP_PROXY_PORT
-- for proxy
-  - USE_EXT_HTTP_PROXY
-    - HTTP_PROXY_IP
-    - HTTP_PROXY_PORT
-  - USE_EXT_SSLOCAL
-    - SOCKS5_PROXY_IP
-    - SOCKS5_PROXY_PORT
-  - USE_EXT_SSSERVER
-    - SS_SERVER
-    - SS_PORT
-    - SS_PASSWORD
-    - SS_METHOD
+  - env for this image
+    - USE_EXT_HTTP_PROXY
+      - HTTP_PROXY_IP
+      - HTTP_PROXY_PORT
+    - USE_EXT_SSLOCAL
+      - SOCKS5_PROXY_IP
+      - SOCKS5_PROXY_PORT
+    - USE_EXT_SSSERVER
+      - SS_SERVER
+      - SS_PORT
+      - SS_PASSWORD
+      - SS_METHOD
+- hubot-another-weixin
+  - HUBOT_WATCH_GROUPS
+  - HUBOT_WATCH_USERS
+  - HUBOT_WATCH_GH
+  - HUBOT_GNTP_SERVER
+  - HUBOT_GNTP_PASSWORD
+
 
 
 # Build docker image
@@ -351,7 +357,7 @@ docker run -it --rm \
 ./start.sh slack
 ```
 
-# invite hubot in slack channel
+### invite hubot in slack channel
 
 input message in slack channel(for example #devops-hubot):
 
@@ -365,3 +371,33 @@ to view help, input : `@hubot help`
 also, you can send direct message to hubot  
 to view help in direct message, just input: `help`  
 ![](doc/hubot-direct-message.png)
+
+## Run hubot-another-weixin
+
+```bash
+export HUBOT_WATCH_GROUPS="HyperHQ"
+export HUBOT_WATCH_GH="中国移动139邮箱"
+export HUBOT_WATCH_USERS="文件传输助手"
+
+export HUBOT_GNTP_SERVER="192.168.1.23"
+export HUBOT_GNTP_PASSWORD="xxxxxx"
+
+export WX_COOKIE='webwxuvid=xxxxxx'
+export WX_UIN='xxxxxx'
+export WX_SID='xxxxxx'
+export WX_SKEY='@crypt_xxxxxx'
+export WX_DEVICEID='xxxxxx'
+
+docker run -it --rm \
+    -e HUBOT_NAME="wxbot" \
+    -e HUBOT_OWNER="jimmy" \
+    -e HUBOT_WATCH_GROUPS="${HUBOT_WATCH_GROUPS}" -e HUBOT_WATCH_GH="${HUBOT_WATCH_GH}" -e HUBOT_WATCH_USERS="${HUBOT_WATCH_USERS}" \
+    -e WX_COOKIE="$WX_COOKIE" -e WX_UIN="$WX_UIN" -e WX_SID="$WX_SID" -e WX_SKEY="$WX_SKEY" -e WX_DEVICEID="$WX_DEVICEID" \
+    -e EXTERNAL_SCRIPTS="hubot-help" \
+    -e HUBOT_GNTP_SERVER=$HUBOT_GNTP_SERVER -e HUBOT_GNTP_PASSWORD=$HUBOT_GNTP_PASSWORD \
+    hyperhq/hyper-devops:latest /bin/bash
+
+//run the following commands in docker container
+./start.sh init
+./start.sh weixin
+```

@@ -14,6 +14,16 @@ EOF
     exit
 }
 
+function generate_config() {
+    sed -i "s|{COOKIE}|$WX_COOKIE|g" config.yaml
+    sed -i "s/{UIN}/$WX_UIN/g" config.yaml
+    sed -i "s/{SID}/$WX_SID/g" config.yaml
+    sed -i "s/{SKEY}/$WX_SKEY/g" config.yaml
+    sed -i "s/{DEVICEID}/$WX_DEVICEID/g" config.yaml
+
+    cp node_modules/hubot-another-weixin/example/weixin-notify-growl.coffee scripts/
+}
+
 function show_env() {
     echo "--------------------------------"
     netstat -tnopl
@@ -40,6 +50,16 @@ hubot-gmail-growl:
   HUBOT_GMAIL_CHECK_INTERVAL: ${HUBOT_GMAIL_CHECK_INTERVAL}
   HUBOT_IMAP_PROXY_SERVER:    ${HUBOT_IMAP_PROXY_SERVER}
   HUBOT_IMAP_PROXY_PORT:      ${HUBOT_IMAP_PROXY_PORT}
+
+hubot-another-weixin:
+  HUBOT_WATCH_GROUPS:    ${HUBOT_WATCH_GROUPS}
+  HUBOT_WATCH_GH:        ${HUBOT_WATCH_GH}
+  HUBOT_WATCH_USERS:     ${HUBOT_WATCH_USERS}
+  WX_COOKIE:             ${WX_COOKIE}
+  WX_UIN:                ${WX_UIN}
+  WX_SID:                ${WX_SID}
+  WX_SKEY:               ${WX_SKEY}
+  WX_DEVICEID:           ${WX_DEVICEID}
 #################################
 EOF
 }
@@ -72,6 +92,11 @@ case $1 in
     slack)
         show_env
         HUBOT_LOG_LEVEL=debug bin/hubot -n $HUBOT_NAME --adapter slack
+        ;;
+    weixin)
+        generate_config
+        show_env
+        bin/hubot -n $HUBOT_NAME --adapter another-weixin
         ;;
     *)
         show_usage

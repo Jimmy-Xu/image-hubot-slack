@@ -100,6 +100,16 @@ ENV HUBOT_IMAP_PROXY_PORT="${HUBOT_IMAP_PROXY_PORT:-5993}"
 ENV HUBOT_SLACK_MYNAME=""
 ENV HUBOT_SLACK_KEYWORDS=""
 
+## hubot-another-weixin
+ENV HUBOT_WATCH_GROUPS=""
+ENV HUBOT_WATCH_GH=""
+ENV HUBOT_WATCH_USERS="文件传输助手"
+ENV WX_COOKIE=""
+ENV WX_UIN=""
+ENV WX_SID=""
+ENV WX_SKEY=""
+ENV WX_DEVICEID=""
+
 ######################################################
 # ENV for proxy
 ######################################################
@@ -151,7 +161,8 @@ RUN yo hubot --owner="${HUBOT_OWNER}" --name="${HUBOT_NAME}" --description="${HU
 		sed -i /redis-brain/d ./external-scripts.json &&\
 		npm install hubot-scripts hubot-script-shellcmd &&\
 		cp -R ./node_modules/hubot-script-shellcmd/bash . &&\
-		npm install hubot-slack hubot-help hubot-hyper-devops hubot-gmail-growl hubot-slack-growl --save
+		npm install hubot-slack hubot-help hubot-hyper-devops hubot-gmail-growl hubot-slack-growl \
+		 hubot-another-weixin xml2js --save
 
 ENV EXTERNAL_SCRIPTS "hubot-help,hubot-hyper-devops,hubot-gmail-growl,hubot-slack-growl"
 CMD node -e "console.log(JSON.stringify('$EXTERNAL_SCRIPTS'.split(',')))" > external-scripts.json && \

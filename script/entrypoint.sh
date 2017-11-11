@@ -224,6 +224,16 @@ hubot-gmail-growl:
 hubot-slack-growl:
   HUBOT_SLACK_MYNAME:         ${HUBOT_SLACK_MYNAME}
   HUBOT_SLACK_KEYWORDS:       ${HUBOT_SLACK_KEYWORDS}
+
+hubot-another-weixin:
+  HUBOT_WATCH_GROUPS:    ${HUBOT_WATCH_GROUPS}
+  HUBOT_WATCH_GH:        ${HUBOT_WATCH_GH}
+  HUBOT_WATCH_USERS:     ${HUBOT_WATCH_USERS}
+  WX_COOKIE:             ${WX_COOKIE}
+  WX_UIN:                ${WX_UIN}
+  WX_SID:                ${WX_SID}
+  WX_SKEY:               ${WX_SKEY}
+  WX_DEVICEID:           ${WX_DEVICEID}
 #################################
 EOF
 
